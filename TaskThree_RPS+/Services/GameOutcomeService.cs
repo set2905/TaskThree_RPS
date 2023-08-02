@@ -2,7 +2,7 @@
 
 namespace TaskThree_RPS_.Services
 {
-    public class GameOutcomeService : IGameOutcomeService
+    public class GameOutcomeService :IGameOutcomeService
     {
         public Dictionary<int, string> Moves { get; }
         private IShowMessageService messageOutputService;

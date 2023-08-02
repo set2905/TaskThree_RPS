@@ -21,9 +21,9 @@ namespace TaskThree_RPS_.Services
         public bool PerformGameSequence()
         {
             int computerMoveChoice = gameOutcomeService.GetRandomMove();
-            string secretKey = string.Empty;
+            string secretKey;
 
-            string hmac = messageAuthService.GetHMAC(computerMoveChoice, out secretKey);
+            string hmac = messageAuthService.GetHMAC(gameOutcomeService.Moves[computerMoveChoice], out secretKey);
             StringBuilder moveOptionsBuilder = new();
             moveOptionsBuilder.AppendLine("HMAC:");
             moveOptionsBuilder.AppendLine(hmac);

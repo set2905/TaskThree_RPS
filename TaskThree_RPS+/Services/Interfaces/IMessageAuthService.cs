@@ -1,8 +1,10 @@
-﻿namespace TaskThree_RPS_.Services.Interfaces
+﻿using Org.BouncyCastle.Crypto;
+namespace TaskThree_RPS_.Services.Interfaces
 {
     public interface IMessageAuthService
     {
-        public string GetHMAC(int move, out string secretKey);
+        public IMac MAC { get; }
+        public string GetHMAC(string move, out string secretKey);
 
     }
 }
