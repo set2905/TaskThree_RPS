@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskThree_RPS_.Services.Interfaces;
 
-namespace TaskThree_RPS_.Services.Validation
+namespace TaskThree_RPS_.Services
 {
     public class LaunchArgsValidationService : IArgsValidator<string[]>
     {
@@ -14,7 +14,7 @@ namespace TaskThree_RPS_.Services.Validation
 
         public LaunchArgsValidationService(IShowMessageService messageOutputService)
         {
-            this.messageOutputService=messageOutputService;
+            this.messageOutputService = messageOutputService;
         }
 
         public bool Validate(string[] args)

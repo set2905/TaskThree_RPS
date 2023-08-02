@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using TaskThree_RPS_.Services;
 using TaskThree_RPS_.Services.Interfaces;
-using TaskThree_RPS_.Services.Validation;
 
 IShowMessageService messageOutputService = new ConsoleMessageShowService();
 IArgsValidator<string[]> argValidator = new LaunchArgsValidationService(messageOutputService);
@@ -12,7 +11,7 @@ if (!argValidator.Validate(args))
 }
 IGameOutcomeService gameOutcomeService = new GameOutcomeService(args, messageOutputService);
 IMessageAuthService messageAuthService = new MessageHMACAuthenticationService();
-ITableService tableService = new HelpTableService();
+ITableService tableService = new HelpTableService(gameOutcomeService);
 while (true)
 {
     PerformGameSequence();
@@ -20,7 +19,7 @@ while (true)
 
 bool PerformGameSequence()
 {
-    int computerMoveChoice = 1;
+    int computerMoveChoice = gameOutcomeService.GetRandomMove();
     string secretKey = string.Empty;
 
     string hmac = messageAuthService.GetHMAC(computerMoveChoice, out secretKey);
@@ -46,15 +45,33 @@ bool PerformGameSequence()
         return true;
     }
 
-    GameOutcomeEnum outcome = GameOutcomeEnum.Undefined;
+    GameOutcomeEnum outcome = GameOutcomeEnum.UNDEFINED;
 
     outcome = gameOutcomeService.GetOutcome(playerInput, computerMoveChoice, out string playerMoveString, out string computerMoveString);
     Console.WriteLine($"Your move: {playerMoveString}");
     Console.WriteLine($"Computer move: {computerMoveString}");
-    Console.WriteLine(outcome.ToString());
+    switch (outcome)
+    {
+        case GameOutcomeEnum.UNDEFINED:
+            messageOutputService.ShowError(outcome.ToString());
+            break;
+        case GameOutcomeEnum.WIN:
+            messageOutputService.ShowSuccess($"You {outcome.ToString()}!");
+            break;
+        case GameOutcomeEnum.LOSE:
+            messageOutputService.ShowDanger($"You {outcome.ToString()}!");
+            break;
+        case GameOutcomeEnum.DRAW:
+            messageOutputService.ShowPrimary(outcome.ToString());
+            break;
+    }
+    if (outcome==GameOutcomeEnum.UNDEFINED) return false;
+
 
 
     Console.WriteLine($"HMAC key:\n{secretKey}");
+    messageOutputService.ShowPrimary("------------------ANOTHER ONE?------------------");
+
     return true;
 }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskThree_RPS_.Services.Interfaces;
+﻿using TaskThree_RPS_.Services.Interfaces;
 
 namespace TaskThree_RPS_.Services
 {
@@ -16,41 +11,84 @@ namespace TaskThree_RPS_.Services
         {
             MovesDictionary = args.Select((v, i) => new { Key = i+1, Value = v })
                                   .ToDictionary(o => o.Key, o => o.Value);
+
             this.messageOutputService = messageOutputService;
         }
-
-        public GameOutcomeEnum GetOutcome(string playerMoveString, int opponentMoveKey, out string playerMove, out string opponentMove)
+        public int GetRandomMove(int seed)
         {
-            if (!int.TryParse(playerMoveString, out int playerMoveKey))
+            System.Random rng = new System.Random(seed);
+            return rng.Next(1, MovesDictionary.Count);
+        }
+        public int GetRandomMove()
+        {
+            System.Random rng = new System.Random();
+            return rng.Next(1, MovesDictionary.Count);
+        }
+
+        public GameOutcomeEnum GetOutcome(string playerMoveKeyInput, int opponentMoveKey, out string playerMoveName, out string opponentMoveName)
+        {
+            if (!int.TryParse(playerMoveKeyInput, out int playerMoveKey))
             {
                 messageOutputService.ShowError("Enter integer value!");
-                opponentMove=string.Empty;
-                playerMove = string.Empty;
-                return GameOutcomeEnum.Undefined;
+                opponentMoveName=string.Empty;
+                playerMoveName = string.Empty;
+                return GameOutcomeEnum.UNDEFINED;
             }
+            return GetOutcome(playerMoveKey, opponentMoveKey, out playerMoveName, out opponentMoveName);
+        }
+
+        public GameOutcomeEnum GetOutcome(int playerMoveKey, int opponentMoveKey, out string playerMoveName, out string opponentMoveName)
+        {
+
             if (!MovesDictionary.ContainsKey(playerMoveKey))
             {
-                messageOutputService.ShowError($"Could not find key {playerMoveString} in move dictionary.");
-                opponentMove=string.Empty;
-                playerMove = string.Empty;
-                return GameOutcomeEnum.Undefined;
+                messageOutputService.ShowError($"Could not find key {playerMoveKey} in move dictionary.");
+                opponentMoveName=string.Empty;
+                playerMoveName = string.Empty;
+                return GameOutcomeEnum.UNDEFINED;
             }
 
             if (!MovesDictionary.ContainsKey(opponentMoveKey))
             {
                 messageOutputService.ShowError($"Could not find opponent key {opponentMoveKey} in move dictionary.");
-                opponentMove=string.Empty;
-                playerMove = string.Empty;
-                return GameOutcomeEnum.Undefined;
+                opponentMoveName=string.Empty;
+                playerMoveName = string.Empty;
+                return GameOutcomeEnum.UNDEFINED;
             }
 
-            playerMove = MovesDictionary[playerMoveKey];
-            opponentMove = MovesDictionary[opponentMoveKey];
+            playerMoveName = MovesDictionary[playerMoveKey];
+            opponentMoveName = MovesDictionary[opponentMoveKey];
 
-            if (playerMoveKey==opponentMoveKey) return GameOutcomeEnum.Draw;
+            if (playerMoveKey==opponentMoveKey) return GameOutcomeEnum.DRAW;
 
+            int half = (MovesDictionary.Count-1)/2;
+            for (int i = 1; i<=half; i++)
+            {
+                int circular = GetCircularMoveIndex(playerMoveKey+i);
+                if (circular==opponentMoveKey)
+                {
+                    return GameOutcomeEnum.LOSE;
+                }
+            }
 
-            return GameOutcomeEnum.Undefined;
+            return GameOutcomeEnum.WIN;
         }
+
+        int GetCircularMoveIndex(int index)
+        {
+            if (index>MovesDictionary.Count)
+            {
+                index %= MovesDictionary.Count;
+                return index;
+            }
+            if (index<0)
+            {
+                index = MovesDictionary.Count - 1;
+                return index;
+            }
+            return index;
+        }
+
+
     }
 }
