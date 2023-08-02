@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TaskThree_RPS+": {
+      "commandName": "Project",
+      "commandLineArgs": "rock Spock paper scissors lizard"
+    }
+  }
+}
