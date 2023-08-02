@@ -15,7 +15,7 @@ namespace TaskThree_RPS_.Services.Interfaces
     }
     public interface IGameOutcomeService
     {
-        public Dictionary<int, string> MovesDictionary { get; }
+        public Dictionary<int, string> Moves { get; }
         public GameOutcomeEnum GetOutcome(string playerMoveString, int opponentMoveKey, out string playerMove, out string opponentMove);
         public GameOutcomeEnum GetOutcome(int playerMoveKey, int opponentMoveKey, out string playerMoveName, out string opponentMoveName);
 

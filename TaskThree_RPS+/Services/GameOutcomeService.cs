@@ -4,12 +4,12 @@ namespace TaskThree_RPS_.Services
 {
     public class GameOutcomeService : IGameOutcomeService
     {
-        public Dictionary<int, string> MovesDictionary { get; }
+        public Dictionary<int, string> Moves { get; }
         private IShowMessageService messageOutputService;
 
-        public GameOutcomeService(string[] args, IShowMessageService messageOutputService)
+        public GameOutcomeService(string[] moves, IShowMessageService messageOutputService)
         {
-            MovesDictionary = args.Select((v, i) => new { Key = i+1, Value = v })
+            Moves = moves.Select((v, i) => new { Key = i+1, Value = v })
                                   .ToDictionary(o => o.Key, o => o.Value);
 
             this.messageOutputService = messageOutputService;
@@ -17,12 +17,12 @@ namespace TaskThree_RPS_.Services
         public int GetRandomMove(int seed)
         {
             System.Random rng = new System.Random(seed);
-            return rng.Next(1, MovesDictionary.Count);
+            return rng.Next(1, Moves.Count);
         }
         public int GetRandomMove()
         {
             System.Random rng = new System.Random();
-            return rng.Next(1, MovesDictionary.Count);
+            return rng.Next(1, Moves.Count);
         }
 
         public GameOutcomeEnum GetOutcome(string playerMoveKeyInput, int opponentMoveKey, out string playerMoveName, out string opponentMoveName)
@@ -40,7 +40,7 @@ namespace TaskThree_RPS_.Services
         public GameOutcomeEnum GetOutcome(int playerMoveKey, int opponentMoveKey, out string playerMoveName, out string opponentMoveName)
         {
 
-            if (!MovesDictionary.ContainsKey(playerMoveKey))
+            if (!Moves.ContainsKey(playerMoveKey))
             {
                 messageOutputService.ShowError($"Could not find key {playerMoveKey} in move dictionary.");
                 opponentMoveName=string.Empty;
@@ -48,7 +48,7 @@ namespace TaskThree_RPS_.Services
                 return GameOutcomeEnum.UNDEFINED;
             }
 
-            if (!MovesDictionary.ContainsKey(opponentMoveKey))
+            if (!Moves.ContainsKey(opponentMoveKey))
             {
                 messageOutputService.ShowError($"Could not find opponent key {opponentMoveKey} in move dictionary.");
                 opponentMoveName=string.Empty;
@@ -56,12 +56,12 @@ namespace TaskThree_RPS_.Services
                 return GameOutcomeEnum.UNDEFINED;
             }
 
-            playerMoveName = MovesDictionary[playerMoveKey];
-            opponentMoveName = MovesDictionary[opponentMoveKey];
+            playerMoveName = Moves[playerMoveKey];
+            opponentMoveName = Moves[opponentMoveKey];
 
             if (playerMoveKey==opponentMoveKey) return GameOutcomeEnum.DRAW;
 
-            int half = (MovesDictionary.Count-1)/2;
+            int half = (Moves.Count-1)/2;
             for (int i = 1; i<=half; i++)
             {
                 int circular = GetCircularMoveIndex(playerMoveKey+i);
@@ -76,14 +76,14 @@ namespace TaskThree_RPS_.Services
 
         int GetCircularMoveIndex(int index)
         {
-            if (index>MovesDictionary.Count)
+            if (index>Moves.Count)
             {
-                index %= MovesDictionary.Count;
+                index %= Moves.Count;
                 return index;
             }
             if (index<0)
             {
-                index = MovesDictionary.Count - 1;
+                index = Moves.Count - 1;
                 return index;
             }
             return index;
