@@ -14,9 +14,7 @@ namespace TaskThree_RPS_.Services
         {
             MAC=mac;
         }
-
         public IMac MAC { get; }
-
 
         public string GetHMAC(string move, out string secretKey)
         {
@@ -26,8 +24,12 @@ namespace TaskThree_RPS_.Services
                 rng.GetBytes(randomNumber);
                 secretKey = Convert.ToBase64String(randomNumber);
             }
-            MAC.Init(new KeyParameter(Encoding.ASCII.GetBytes(secretKey)));
+            return GetHMAC(move, secretKey);
+        }
 
+        public string GetHMAC(string move, string secretKey)
+        {
+            MAC.Init(new KeyParameter(Encoding.ASCII.GetBytes(secretKey)));
             byte[] result = new byte[MAC.GetMacSize()];
             byte[] bytes = Encoding.ASCII.GetBytes(move);
             MAC.BlockUpdate(bytes, 0, bytes.Length);

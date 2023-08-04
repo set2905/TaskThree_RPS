@@ -8,6 +8,6 @@ namespace TaskThree_RPS_.Services.Interfaces
 {
     public interface IArgsValidator<T>
     {
-        public bool Validate(T args);
+        public bool IsValid(T args);
     }
 }

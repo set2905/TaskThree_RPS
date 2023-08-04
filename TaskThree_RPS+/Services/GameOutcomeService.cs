@@ -1,15 +1,17 @@
-﻿using TaskThree_RPS_.Services.Interfaces;
+﻿using TaskThree_RPS_.Helpers;
+using TaskThree_RPS_.Services.Interfaces;
 
 namespace TaskThree_RPS_.Services
 {
-    public class GameOutcomeService :IGameOutcomeService
+    public class GameOutcomeService : IGameOutcomeService
     {
         public Dictionary<int, string> Moves { get; }
         private IShowMessageService messageOutputService;
+        private const int MOVES_KEY_OFFSET = 1;
 
         public GameOutcomeService(string[] moves, IShowMessageService messageOutputService)
         {
-            Moves = moves.Select((v, i) => new { Key = i+1, Value = v })
+            Moves = moves.Select((v, i) => new { Key = i+MOVES_KEY_OFFSET, Value = v })
                                   .ToDictionary(o => o.Key, o => o.Value);
 
             this.messageOutputService = messageOutputService;
@@ -17,12 +19,12 @@ namespace TaskThree_RPS_.Services
         public int GetRandomMove(int seed)
         {
             System.Random rng = new System.Random(seed);
-            return rng.Next(1, Moves.Count);
+            return rng.Next(1, Moves.Count+MOVES_KEY_OFFSET);
         }
         public int GetRandomMove()
         {
             System.Random rng = new System.Random();
-            return rng.Next(1, Moves.Count);
+            return rng.Next(1, Moves.Count+MOVES_KEY_OFFSET);
         }
 
         public GameOutcomeEnum GetOutcome(string playerMoveKeyInput, int opponentMoveKey, out string playerMoveName, out string opponentMoveName)
@@ -64,7 +66,7 @@ namespace TaskThree_RPS_.Services
             int half = (Moves.Count-1)/2;
             for (int i = 1; i<=half; i++)
             {
-                int circular = GetCircularMoveIndex(playerMoveKey+i);
+                int circular = CollectionHelper.GetForwardCircularIndex(Moves.Count,playerMoveKey+i);
                 if (circular==opponentMoveKey)
                 {
                     return GameOutcomeEnum.LOSE;
@@ -73,22 +75,6 @@ namespace TaskThree_RPS_.Services
 
             return GameOutcomeEnum.WIN;
         }
-
-        int GetCircularMoveIndex(int index)
-        {
-            if (index>Moves.Count)
-            {
-                index %= Moves.Count;
-                return index;
-            }
-            if (index<0)
-            {
-                index = Moves.Count - 1;
-                return index;
-            }
-            return index;
-        }
-
 
     }
 }

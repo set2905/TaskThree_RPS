@@ -49,15 +49,18 @@ namespace TaskThree_RPS_.Services
             GameOutcomeEnum outcome = GameOutcomeEnum.UNDEFINED;
 
             outcome = gameOutcomeService.GetOutcome(playerInput, computerMoveChoice, out string playerMoveString, out string computerMoveString);
+
+            if (outcome==GameOutcomeEnum.UNDEFINED) return false;
+
             Console.WriteLine($"Your move: {playerMoveString}");
             Console.WriteLine($"Computer move: {computerMoveString}");
             switch (outcome)
             {
                 case GameOutcomeEnum.WIN:
-                    messageOutputService.ShowSuccess($"You {outcome.ToString()}!");
+                    messageOutputService.ShowSuccess($"You {outcome}!");
                     break;
                 case GameOutcomeEnum.LOSE:
-                    messageOutputService.ShowDanger($"You {outcome.ToString()}!");
+                    messageOutputService.ShowDanger($"You {outcome}!");
                     break;
                 case GameOutcomeEnum.DRAW:
                     messageOutputService.ShowPrimary(outcome.ToString());
@@ -66,11 +69,9 @@ namespace TaskThree_RPS_.Services
                     messageOutputService.ShowError(outcome.ToString());
                     break;
             }
-            if (outcome==GameOutcomeEnum.UNDEFINED) return false;
-
-
 
             Console.WriteLine($"HMAC key:\n{secretKey}");
+            Console.WriteLine($"HMAC test:\n{messageAuthService.GetHMAC(computerMoveString, secretKey)}");
             messageOutputService.ShowPrimary("------------------ANOTHER ONE?------------------");
 
             return true;

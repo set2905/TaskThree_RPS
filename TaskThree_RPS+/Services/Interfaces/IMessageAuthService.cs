@@ -5,6 +5,7 @@ namespace TaskThree_RPS_.Services.Interfaces
     {
         public IMac MAC { get; }
         public string GetHMAC(string move, out string secretKey);
+        public string GetHMAC(string move, string secretKey);
 
     }
 }

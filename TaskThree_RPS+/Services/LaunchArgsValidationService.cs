@@ -17,7 +17,7 @@ namespace TaskThree_RPS_.Services
             this.messageOutputService = messageOutputService;
         }
 
-        public bool Validate(string[] args)
+        public bool IsValid(string[] args)
         {
             bool result = true;
             if (args.Length < 3)
