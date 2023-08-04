@@ -10,7 +10,10 @@ namespace TaskThree_RPS_.Services
         private readonly IGameOutcomeService gameOutcomeService;
         private readonly ITableService tableService;
 
-        public GameSequenceController(IShowMessageService messageOutputService, IMessageAuthService messageAuthService, IGameOutcomeService gameOutcomeService, ITableService tableService)
+        public GameSequenceController(IShowMessageService messageOutputService,
+                                      IMessageAuthService messageAuthService,
+                                      IGameOutcomeService gameOutcomeService,
+                                      ITableService tableService)
         {
             this.messageOutputService=messageOutputService;
             this.messageAuthService=messageAuthService;
@@ -21,37 +24,27 @@ namespace TaskThree_RPS_.Services
         public bool PerformGameSequence()
         {
             int computerMoveChoice = gameOutcomeService.GetRandomMove();
-            string secretKey;
+            string exitKey = (gameOutcomeService.Moves.First().Key-1).ToString();
+            string hmac = messageAuthService.GetHMAC(gameOutcomeService.Moves[computerMoveChoice], out string secretKey);
 
-            string hmac = messageAuthService.GetHMAC(gameOutcomeService.Moves[computerMoveChoice], out secretKey);
-            StringBuilder moveOptionsBuilder = new();
-            moveOptionsBuilder.AppendLine("HMAC:");
-            moveOptionsBuilder.AppendLine(hmac);
-            moveOptionsBuilder.AppendLine("Available Moves: ");
-            foreach (KeyValuePair<int, string> entry in gameOutcomeService.Moves)
-            {
-                moveOptionsBuilder.AppendLine($"{entry.Key.ToString()} - {entry.Value}");
-            }
-            moveOptionsBuilder.AppendLine("0 - exit");
-            moveOptionsBuilder.AppendLine("? - help");
-            Console.WriteLine(moveOptionsBuilder.ToString());
+            ShowGamePrerequisiteInfo(hmac, exitKey);
 
             Console.WriteLine("Enter your move: ");
             string? playerInput = Console.ReadLine();
             if (playerInput==null) return false;
-            if (playerInput == "0") Environment.Exit(0);
+            if (playerInput == exitKey) Environment.Exit(0);
             if (playerInput == "?")
             {
                 tableService.ShowTable();
                 return true;
             }
 
-            GameOutcomeEnum outcome = GameOutcomeEnum.UNDEFINED;
-
-            outcome = gameOutcomeService.GetOutcome(playerInput, computerMoveChoice, out string playerMoveString, out string computerMoveString);
+            GameOutcomeEnum outcome = gameOutcomeService.GetOutcome(playerInput,
+                                                    computerMoveChoice,
+                                                    out string playerMoveString,
+                                                    out string computerMoveString);
 
             if (outcome==GameOutcomeEnum.UNDEFINED) return false;
-
             Console.WriteLine($"Your move: {playerMoveString}");
             Console.WriteLine($"Computer move: {computerMoveString}");
             switch (outcome)
@@ -71,10 +64,20 @@ namespace TaskThree_RPS_.Services
             }
 
             Console.WriteLine($"HMAC key:\n{secretKey}");
-            Console.WriteLine($"HMAC test:\n{messageAuthService.GetHMAC(computerMoveString, secretKey)}");
             messageOutputService.ShowPrimary("------------------ANOTHER ONE?------------------");
-
             return true;
+        }
+
+        private void ShowGamePrerequisiteInfo(string hmac, string exitKey)
+        {
+            StringBuilder moveOptionsBuilder = new();
+            moveOptionsBuilder.AppendLine("HMAC:").AppendLine(hmac).AppendLine("Available Moves: ");
+            foreach (KeyValuePair<int, string> entry in gameOutcomeService.Moves)
+            {
+                moveOptionsBuilder.AppendLine($"{entry.Key.ToString()} - {entry.Value}");
+            }
+            moveOptionsBuilder.AppendLine($"{exitKey} - exit").AppendLine("? - help");
+            Console.WriteLine(moveOptionsBuilder.ToString());
         }
     }
 }

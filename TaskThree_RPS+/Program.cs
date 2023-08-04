@@ -6,7 +6,11 @@ using TaskThree_RPS_.Services.Interfaces;
 IShowMessageService messageOutputService = new ConsoleMessageShowService();
 IArgsValidator<string[]> argValidator = new LaunchArgsValidationService(messageOutputService);
 
-if (!argValidator.IsValid(args)) return;
+if (!argValidator.IsValid(args))
+{
+    Console.ReadLine();
+    return;
+}
 
 IGameOutcomeService gameOutcomeService = new GameOutcomeService(args, messageOutputService);
 IMessageAuthService messageAuthService = new MessageHMACAuthenticationService(new HMac(new Sha3Digest(256)));

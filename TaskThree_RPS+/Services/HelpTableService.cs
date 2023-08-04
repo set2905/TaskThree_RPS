@@ -24,10 +24,15 @@ namespace TaskThree_RPS_.Services
                 cachedtable.Write();
                 return;
             }
+            cachedtable = GenerateHelpTable();
+            cachedtable.Write();
+        }
 
+        private ConsoleTable GenerateHelpTable()
+        {
             List<string> headerHorizontal = GameOutcomeService.Moves.Select(x => x.Value).ToList();
             headerHorizontal.Insert(0, "v PC\\User >");
-            cachedtable = new(headerHorizontal.ToArray());
+            ConsoleTable generatedTable = new(headerHorizontal.ToArray());
             foreach (KeyValuePair<int, string> move in GameOutcomeService.Moves)
             {
                 List<string> row = new() { move.Value };
@@ -35,9 +40,9 @@ namespace TaskThree_RPS_.Services
                 {
                     row.Add(GameOutcomeService.GetOutcome(keyValuePair.Key, move.Key, out _, out _).ToString());
                 }
-                cachedtable.AddRow(row.ToArray());
+                generatedTable.AddRow(row.ToArray());
             }
-            cachedtable.Write();
+            return generatedTable;
         }
     }
 }
