@@ -17,7 +17,7 @@ namespace TaskThree_RPS_.Services
 
         public void ShowError(string message)
         {
-            Console.WriteLine("-----------ERROR-----------");
+            ShowMessage("ERROR");
             ShowMessage(message, ConsoleColor.Red);
         }
 
@@ -33,9 +33,9 @@ namespace TaskThree_RPS_.Services
 
         public void ShowSuccess(string message)
         {
-            ShowMessage(message,ConsoleColor.Green);
+            ShowMessage(message, ConsoleColor.Green);
         }
-        private void ShowMessage(string message, ConsoleColor color)
+        private void ShowMessage(string message, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(message);

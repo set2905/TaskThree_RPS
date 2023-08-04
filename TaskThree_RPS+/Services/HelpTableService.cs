@@ -25,6 +25,7 @@ namespace TaskThree_RPS_.Services
                 return;
             }
             cachedtable = GenerateHelpTable();
+            Console.WriteLine("Table is generated from your point of view. \ne.g. \"WON\" means that you would win.");
             cachedtable.Write();
         }
 

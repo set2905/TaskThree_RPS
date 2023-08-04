@@ -64,7 +64,7 @@ namespace TaskThree_RPS_.Services
             }
 
             Console.WriteLine($"HMAC key:\n{secretKey}");
-            messageOutputService.ShowPrimary("------------------ANOTHER ONE?------------------");
+            messageOutputService.ShowPrimary("PLAY ANOTHER ONE?");
             return true;
         }
 

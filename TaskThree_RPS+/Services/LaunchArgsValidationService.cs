@@ -19,16 +19,18 @@ namespace TaskThree_RPS_.Services
 
         public bool IsValid(string[] args)
         {
-            bool result = IsArgsLengthCorrect(args, 3) && IsArgsLengthOdd(args) && IsArgsRepeating(args);
+            bool result = IsArgsLengthCorrect(args, 3) & IsArgsLengthOdd(args) & IsArgsRepeating(args);
             if (result==false)
                 Console.WriteLine($"Correct parameters example: {EXAMPLE_ARGS}");
             return result;
         }
+
         private bool IsArgsLengthCorrect(string[] args, int requiredLength)
         {
+            
             if (args.Length < requiredLength)
             {
-                messageOutputService.ShowError($"Please, pass more than {requiredLength} parameters!");
+                messageOutputService.ShowError($"You've passed {args.Length} parameters. Please, pass more than {requiredLength} parameters!");
                 return false;
             }
             return true;
