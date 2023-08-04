@@ -1,10 +1,8 @@
 ﻿using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Macs;
 using Org.BouncyCastle.Crypto.Parameters;
 using System.Security.Cryptography;
 using System.Text;
 using TaskThree_RPS_.Services.Interfaces;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TaskThree_RPS_.Services
 {
